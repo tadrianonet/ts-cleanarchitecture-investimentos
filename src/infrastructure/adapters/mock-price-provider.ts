@@ -55,6 +55,10 @@ export class MockPriceProvider implements PriceProvider {
       return true;
     }
 
+    if (process.env.MOCK_MARKET_ALWAYS_OPEN === '1' || process.env.MOCK_MARKET_ALWAYS_OPEN === 'true') {
+      return true;
+    }
+
     const now = new Date();
     const hour = now.getHours();
     const dayOfWeek = now.getDay();

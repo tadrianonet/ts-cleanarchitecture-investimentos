@@ -20,7 +20,7 @@ npm install
 | `npm run build` | Compila `src/` para `dist/` |
 | `npm start` | Sobe a API (usa `dist/main/server.js`; rode `npm run build` antes) |
 | `npm run dev` | Desenvolvimento com recarga (`ts-node-dev`) |
-| `npm test` | Testes de integração (Jest + Supertest) |
+| `npm test` | Testes Jest (integração com Supertest e unitários) |
 | `npm run example` | Exemplo com axios (exige API em `http://localhost:3000`) |
 
 ## Executar a API
@@ -41,6 +41,18 @@ npm test
 ```
 
 Com `NODE_ENV=test`, o `MockPriceProvider` usa preços determinísticos (sem volatilidade aleatória) e trata o mercado como aberto para ordens em ação, garantindo resultados estáveis na CI e localmente.
+
+Há também testes **unitários** em `src/__tests__/unit/`, por exemplo [`create-investment.test.ts`](src/__tests__/unit/application/create-investment.test.ts), que mockam `isMarketOpen` e cobrem o cenário de mercado fechado sem depender do dia da semana (cenário que os testes de integração deixam de exercitar de propósito).
+
+### API local em fim de semana ou fora do horário
+
+Fora de `NODE_ENV=test`, o `MockPriceProvider.isMarketOpen()` considera segunda a sexta, das 10h às 17h (horário local da máquina). Em domingo, um `POST` de investimento em ação pode retornar erro de mercado fechado, o que é esperado pela regra de negócio. Para desenvolvimento, você pode forçar mercado aberto:
+
+```bash
+MOCK_MARKET_ALWAYS_OPEN=1 npm start
+```
+
+(ou `true` no lugar de `1`).
 
 ## Exemplo HTTP (axios)
 
